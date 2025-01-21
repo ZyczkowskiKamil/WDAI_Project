@@ -1,5 +1,10 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+
+interface CategoryProps {
+  categoryId: number;
+  categoryName: string;
+}
 
 export default function AddProduct() {
   const [title, setTitle] = useState<string>("");
@@ -9,7 +14,18 @@ export default function AddProduct() {
   const [price, setPrice] = useState<number>();
   const [discount, setDiscount] = useState<number>(0);
 
+  const [categories, setCategories] = useState<CategoryProps[]>([]);
   const [message, setMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const response = await axios.get("http://localhost:8080/categories");
+      setCategories(response.data);
+      console.log(response.data);
+    };
+
+    fetchCategories();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -45,40 +61,54 @@ export default function AddProduct() {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        Title:
+        <label htmlFor="titleInput">Title: </label>
         <input
+          id="titleInput"
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
         />
         <br />
-        Description:
+        <label htmlFor="descriptionInput">Description: </label>
         <input
+          id="descriptionInput"
           type="text"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           required
         />
         <br />
-        Category ID:
-        <input
-          type="number"
+        <label htmlFor="categoryIdInput">Category ID: </label>
+        <select
+          id="categorySelect"
           value={categoryId}
-          onChange={(e) => setCategoryId(e.target.valueAsNumber)}
-          min={1}
+          onChange={(e) => setCategoryId(parseInt(e.target.value))}
           required
-        />
+        >
+          <option value="" selected disabled hidden>
+            Choose category...
+          </option>
+          {categories.map((category) => {
+            return (
+              <option value={category.categoryId}>
+                {category.categoryName}
+              </option>
+            );
+          })}
+        </select>
         <br />
-        Image URL:
+        <label htmlFor="imageUrlInput">Image URL: </label>
         <input
+          id="imageUrlInput"
           type="text"
           value={imageUrl}
           onChange={(e) => setImageUrl(e.target.value)}
         />
         <br />
-        Price:
+        <label htmlFor="priceInput">Price: </label>
         <input
+          id="priceInput"
           type="number"
           value={price}
           onChange={(e) => setPrice(e.target.valueAsNumber)}
@@ -88,16 +118,18 @@ export default function AddProduct() {
           required
         />
         <br />
-        Discount:
+        <label htmlFor="discountInput">Discount: </label>
         <input
+          id="discountInput"
           type="number"
-          value={discount}
-          onChange={(e) => setDiscount(e.target.valueAsNumber)}
+          value={Math.round(discount * 100)}
+          onChange={(e) => setDiscount(e.target.valueAsNumber / 100)}
           min={0}
-          max={0.99}
-          step={0.01}
+          max={99}
+          step={1}
           required
         />
+        %
         <br />
         <button type="submit">Add product</button>
       </form>

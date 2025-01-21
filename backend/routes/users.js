@@ -175,6 +175,27 @@ router.route("/checkemailavailable/:email").get((req, res) => {
   });
 });
 
+router.route("/authenticateLogin").post((req, res) => {
+  const login = req.params.login;
+  const password = req.params.password;
+
+  const userGetQuery = `SELECT * FROM users WHERE login=${login}`;
+  db.get(userGetQuery, [], (err, row) => {
+    if (err) {
+      console.log("Infernal server error while authenticating user login");
+      return res.status(500).json({ error: "Infernal server error" });
+    }
+
+    if (row) {
+      const hashedPassword = row;
+    } else {
+      // bad login
+    }
+  });
+
+  console.log(hashedPassword);
+});
+
 // router.param("id", (req, res, next, id) => {
 //   // run when id is found
 //   // req.id = id;
