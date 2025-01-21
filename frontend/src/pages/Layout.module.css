@@ -1,0 +1,40 @@
+.navBar {
+  background-color: rgb(35, 35, 35);
+
+  height: 50px;
+}
+
+.navBar ul {
+  height: 100%;
+  width: 100%;
+
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.navBar ul * {
+  text-decoration: none;
+  color: white;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.navBar .shopLogo {
+  height: 50px;
+  width: 50px;
+}
+
+.navBar form * {
+  color: black;
+}
+
+.footer {
+  position: absolute;
+  width: 100vw;
+  color: white;
+  bottom: 0;
+  background-color: rgb(35, 35, 35);
+}

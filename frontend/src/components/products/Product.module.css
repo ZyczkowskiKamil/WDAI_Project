@@ -1,0 +1,74 @@
+.disableOutsideClicks {
+  z-index: 10000;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bigProductDiv {
+  border: 10px solid black;
+  border-radius: 10px;
+  width: 600px;
+  height: 600px;
+  overflow: hidden;
+  background-color: green;
+}
+
+.bigProductDiv img {
+  width: 200px;
+  height: 200px;
+}
+
+.productDiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+
+  border: 5px solid black;
+  border-radius: 5px;
+  width: 200px;
+  height: 400px;
+  overflow: hidden;
+  margin: 10px;
+}
+
+.productDiv img {
+  height: 200px;
+  width: 200px;
+}
+
+.productDiv .priceDiv {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.productDiv .currentPriceDiv {
+  display: flex;
+  font-size: 30px;
+}
+
+.productDiv .oldPriceDiv {
+  display: flex;
+  color: gray;
+  text-decoration-line: line-through;
+}
+
+.productDiv .titleDiv {
+  font-size: 20px;
+}
+
+.commentsDiv {
+  background-color: antiquewhite;
+}
+
+.singleCommentDiv {
+  border: 3px solid black;
+}
