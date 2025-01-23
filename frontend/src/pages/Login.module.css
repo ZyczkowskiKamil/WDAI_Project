@@ -1,0 +1,54 @@
+.pageDiv {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100vw;
+  height: 100vh;
+}
+
+.loginWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  width: 400px;
+  height: 500px;
+
+  background-color: gray;
+  border: 3px solid black;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.loginWrapper h1 {
+  font-size: 50px;
+}
+
+.loginWrapper form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loginWrapper form div {
+  padding: 5px;
+}
+
+.loginWrapper form div input {
+  width: 200px;
+  height: 30px;
+  font-size: 20px;
+}
+
+.loginWrapper .errorMessageDiv {
+  color: red;
+  text-align: center;
+}
+
+.loginWrapper form div button {
+  width: 200px;
+  height: 30px;
+  font-size: 20px;
+}

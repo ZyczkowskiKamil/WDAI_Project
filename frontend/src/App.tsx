@@ -10,6 +10,7 @@ import Register from "./pages/Register";
 import AdminPanel from "./pages/AdminPanel";
 import AppContextsProvider from "./contexts/AppContextsProvider";
 import Products from "./pages/Products";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
               <Route path="login" element={<Login />} />
               <Route path="register" element={<Register />} />
               <Route path="about" element={<About />} />
+              <Route path="profile" element={<Profile />} />
               <Route path="adminPanel" element={<AdminPanel />} />
 
               <Route path="*" element={<NoPage />} />

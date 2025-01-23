@@ -62,12 +62,10 @@ export default function Products() {
     const fetchCategories = async () => {
       const response = await axios.get("http://localhost:8080/categories");
       setCategories(response.data);
-      console.log(response.data);
     };
     const fetchBrands = async () => {
       const response = await axios.get("http://localhost:8080/brands");
       setBrands(response.data);
-      console.log(response.data);
     };
 
     fetchProducts();
@@ -102,13 +100,12 @@ export default function Products() {
             id="categorySelect"
             value={tempCategoryId}
             onChange={(e) => setTempCategoryId(parseInt(e.target.value))}
+            defaultValue={undefined}
           >
-            <option value={undefined} selected>
-              Choose category...
-            </option>
+            <option value={undefined}>Choose category...</option>
             {categories.map((category) => {
               return (
-                <option value={category.categoryId}>
+                <option value={category.categoryId} key={category.categoryId}>
                   {category.categoryName}
                 </option>
               );
@@ -121,12 +118,15 @@ export default function Products() {
             id="brandSelect"
             value={tempBrandId}
             onChange={(e) => setTempBrandId(parseInt(e.target.value))}
+            defaultValue={undefined}
           >
-            <option value={undefined} selected>
-              Choose brand...
-            </option>
+            <option value={undefined}>Choose brand...</option>
             {brands.map((brand) => {
-              return <option value={brand.brandId}>{brand.brandName}</option>;
+              return (
+                <option value={brand.brandId} key={brand.brandId}>
+                  {brand.brandName}
+                </option>
+              );
             })}
           </select>
           <br />

@@ -1,7 +1,10 @@
 import { Link, Outlet } from "react-router-dom";
 import styles from "./Layout.module.css";
+import { useAuthContext } from "../contexts/AuthContextProvider";
 
 export default function Layout() {
+  const { isLoggedIn, login, logout } = useAuthContext();
+
   return (
     <>
       <nav className={styles.navBar}>
@@ -9,9 +12,8 @@ export default function Layout() {
           <li>
             <img className={styles.shopLogo} src="src/assets/logo.png" alt="" />
           </li>
-          <li className={styles.shopName}>OnlineShop</li>
-          <li>
-            <Link to="/">Home</Link>
+          <li className={styles.shopName}>
+            <Link to="/">OnlineShop</Link>
           </li>
           <li>
             <Link to="/products">Products</Link>
@@ -26,7 +28,11 @@ export default function Layout() {
             <Link to="/cart">Cart</Link>
           </li>
           <li>
-            <Link to="/login">Login</Link>
+            {isLoggedIn ? (
+              <Link to="/profile">Profile</Link>
+            ) : (
+              <Link to="/login">Login</Link>
+            )}
           </li>
           <li>
             <Link to="/adminPanel">AdminPanel</Link>

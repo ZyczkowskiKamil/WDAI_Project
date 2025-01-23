@@ -58,6 +58,7 @@
 
 .bigProductDiv .productAndBuyDiv .priceDiv {
   font-size: 32px;
+  margin-top: 10px;
   display: flex;
 }
 .bigProductDiv .priceDiv .newPriceDiv {
@@ -68,11 +69,27 @@
   color: red;
   text-decoration-line: line-through;
 }
-.bigProductDiv .discountDiv {
+.bigProductDiv .priceDiv .discountDiv {
+  height: 60%;
+  font-size: 20px;
   background-color: red;
 }
 
 .bigProductDiv .addToCartDiv {
+  font-size: 20px;
+  padding-top: 5px;
+  padding-bottom: 10px;
+}
+.bigProductDiv .addToCartDiv input {
+  width: 50px;
+  height: 22px;
+  font-size: 20px;
+}
+.bigProductDiv .addToCartDiv button {
+  height: 26px;
+  width: 150px;
+  font-size: 20px;
+  margin-top: 10px;
 }
 
 .bigProductDiv .brandCategoryIdDiv {
@@ -82,6 +99,11 @@
 }
 .bigProductDiv .commentsDiv .singleCommentDiv {
   border: 1px solid black;
+}
+
+.bigProductDiv .closeButton {
+  height: 40px;
+  font-size: 30px;
 }
 
 /*  */

@@ -1,7 +1,11 @@
 import axios from "axios";
 import { useState } from "react";
+import styles from "./Register.module.css";
+import { useNavigate } from "react-router-dom";
 
 export default function Register() {
+  const navigate = useNavigate();
+
   const [login, setLogin] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [firstName, setFirstName] = useState<string>("");
@@ -70,6 +74,10 @@ export default function Register() {
       await axios.post("http://localhost:8080/users", newUser);
 
       setError("Registered successfully");
+
+      console.log();
+
+      navigate("/login");
     } catch (err) {
       setError("There was an error during register");
       console.log(err);
@@ -77,56 +85,84 @@ export default function Register() {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="login-input">Login: </label>
-        <input
-          id="login-input"
-          type="text"
-          value={login}
-          onChange={(e) => setLogin(e.target.value)}
-          required
-        />
-        <br />
-        <label htmlFor="password-input">Password: </label>
-        <input
-          id="password-input"
-          type="text"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <br />
-        <label htmlFor="firstname-input">First name: </label>
-        <input
-          id="firstname-input"
-          type="text"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
-          required
-        />
-        <br />
-        <label htmlFor="lastname-input">Last name: </label>
-        <input
-          id="lastname-input"
-          type="text"
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
-          required
-        />
-        <br />
-        <label htmlFor="email-input">Email: </label>
-        <input
-          id="email-input"
-          type="text"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <br />
-        <button type="submit">Register</button>
-      </form>
-      {error != null && error}
+    <div className={styles.pageDiv}>
+      <div className={styles.registerWrapper}>
+        <h1>REGISTER</h1>
+
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label htmlFor="login-input">
+              <input
+                id="login-input"
+                type="text"
+                value={login}
+                placeholder="Username"
+                onChange={(e) => setLogin(e.target.value)}
+                required
+              />
+            </label>
+          </div>
+
+          <div>
+            <label htmlFor="password-input">
+              <input
+                id="password-input"
+                type="text"
+                value={password}
+                placeholder="Password"
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </label>
+          </div>
+
+          <div>
+            <label htmlFor="firstname-input">
+              <input
+                id="firstname-input"
+                type="text"
+                value={firstName}
+                placeholder="First Name"
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+              />
+            </label>
+          </div>
+
+          <div>
+            <label htmlFor="lastname-input">
+              <input
+                id="lastname-input"
+                type="text"
+                value={lastName}
+                placeholder="Last Name"
+                onChange={(e) => setLastName(e.target.value)}
+                required
+              />
+            </label>
+          </div>
+
+          <div>
+            <label htmlFor="email-input">
+              <input
+                id="email-input"
+                type="text"
+                value={email}
+                placeholder="Email"
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </label>
+          </div>
+
+          <div>
+            {" "}
+            <button type="submit">Sign up</button>
+          </div>
+        </form>
+
+        {error ? <div className={styles.errorMessageDiv}>{error}</div> : <></>}
+      </div>
     </div>
   );
 }

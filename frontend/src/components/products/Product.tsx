@@ -137,14 +137,19 @@ export default function Product(props: ProductComponentProps) {
                     {productPriceAfterDiscount}zł
                   </div>
                   {product.discount ? (
-                    <div className={styles.oldPriceDiv}>{product.price}zł</div>
+                    <>
+                      <div className={styles.oldPriceDiv}>
+                        {product.price}zł
+                      </div>
+                      <div className={styles.discountDiv}>
+                        -{product.discount * 100}%
+                      </div>
+                    </>
                   ) : (
                     <></>
                   )}
                 </div>
-                <div className={styles.discountDiv}>
-                  -{product.discount * 100}%
-                </div>
+
                 <div className={styles.addToCartDiv}>
                   <form onSubmit={handleAddToCart}>
                     <label htmlFor="productQuantityInput">Quantity: </label>
@@ -226,8 +231,6 @@ export default function Product(props: ProductComponentProps) {
           </div>
 
           <div className={styles.titleDiv}>{product.title}</div>
-
-          <div>{productPriceAfterDiscount}</div>
 
           <div className={styles.productInfoDiv}>
             <div className={styles.categoryAndBrandDiv}>

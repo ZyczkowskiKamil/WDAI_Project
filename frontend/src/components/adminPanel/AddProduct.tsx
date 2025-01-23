@@ -29,12 +29,10 @@ export default function AddProduct() {
     const fetchCategories = async () => {
       const response = await axios.get("http://localhost:8080/categories");
       setCategories(response.data);
-      console.log(response.data);
     };
     const fetchBrands = async () => {
       const response = await axios.get("http://localhost:8080/brands");
       setBrands(response.data);
-      console.log(response.data);
     };
 
     fetchCategories();
