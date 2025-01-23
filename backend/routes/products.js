@@ -24,17 +24,27 @@ router
   })
   .post((req, res) => {
     const query =
-      "INSERT INTO products (title,description,categoryId,imageUrl,price,discount) VALUES (?,?,?,?,?,?)";
+      "INSERT INTO products (title,description,categoryId,brandId,imageUrl,price,discount,stockQuantity) VALUES (?,?,?,?,?,?,?,?)";
 
-    const { title, description, categoryId, imageUrl, price, discount } =
-      req.body;
+    const {
+      title,
+      description,
+      categoryId,
+      brandId,
+      imageUrl,
+      price,
+      discount,
+      stockQuantity,
+    } = req.body;
 
     if (
       !title ||
       !description ||
       !categoryId ||
+      !brandId ||
       !price ||
-      (!discount && discount != 0)
+      (!discount && discount != 0) ||
+      (!stockQuantity && stockQuantity != 0)
     ) {
       return res
         .status(400)
@@ -43,7 +53,16 @@ router
 
     db.run(
       query,
-      [title, description, categoryId, imageUrl, price, discount],
+      [
+        title,
+        description,
+        categoryId,
+        brandId,
+        imageUrl,
+        price,
+        discount,
+        stockQuantity,
+      ],
       function (err) {
         if (err) {
           console.log("Error inserting data into products: ", err.message);

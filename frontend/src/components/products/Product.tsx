@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./Product.module.css";
 import axios from "axios";
 
@@ -7,6 +7,7 @@ interface ProductProps {
   title: string;
   description: string;
   categoryId: number;
+  brandId: number;
   imageUrl: string | null;
   price: number;
   discount: number;
@@ -29,32 +30,80 @@ export default function Product(props: ProductComponentProps) {
   const [bigProductDisplay, setBigProductDisplay] = useState<boolean>(false);
   const [numberToBuy, setNumberToBuy] = useState<number>(1);
   const [comments, setComments] = useState<CommentProps[]>([]);
-  const [commentsLoading, setCommentsLoading] = useState<boolean>(true);
+  const [commentsLoaded, setCommentsLoaded] = useState<boolean>(false);
   const [commentsError, setCommentsError] = useState<string | null>(null);
+  const [categoryName, setCategoryName] = useState<string>("");
+  const [brandName, setBrandName] = useState<string>("");
+  const [averageRating, setAverageRating] = useState<number>(0);
 
-  const onBigDisplayShow = () => {
+  const productPriceAfterDiscount: string = (
+    product.price *
+    (1 - product.discount)
+  ).toFixed(2);
+
+  useEffect(() => {
+    const fetchCategory = async () => {
+      const response = await axios.get(
+        `http://localhost:8080/categories/${product.categoryId}`
+      );
+
+      if (response.status === 200) {
+        setCategoryName(response.data.categoryName);
+      } else {
+        // no category fetched
+        setCategoryName("No category");
+      }
+    };
+
+    const fetchBrand = async () => {
+      const response = await axios.get(
+        `http://localhost:8080/brands/${product.brandId}`
+      );
+
+      if (response.status === 200) {
+        setBrandName(response.data.brandName);
+      } else {
+        // no brand fetched
+        setBrandName("No brand");
+      }
+    };
+
+    fetchCategory();
+    fetchBrand();
+  }, []);
+
+  const onBigDisplayShow = async () => {
     setBigProductDisplay(true);
 
-    if (commentsLoading) {
-      const fetchComments = async () => {
+    if (!commentsLoaded) {
+      const fetchCommentsAndRating = async () => {
         try {
           const response = await axios.get(
             `http://localhost:8080/comments/getcommentsforproduct/${product.id}`
           );
-          setComments(response.data);
+
+          const comments: CommentProps[] = response.data;
+          setComments(comments);
+
+          let ratingSum = 0;
+          comments.forEach((comment) => {
+            console.log(comment);
+            ratingSum += comment.starsNumber;
+          });
+          if (comments.length) setAverageRating(ratingSum / comments.length);
         } catch (err) {
           setCommentsError("Error retrieving comments");
           console.log(err);
         } finally {
-          setCommentsLoading(false);
+          setCommentsLoaded(true);
         }
       };
 
-      fetchComments();
+      fetchCommentsAndRating();
     }
   };
 
-  const handleBuyProduct = (e: React.FormEvent<HTMLElement>) => {
+  const handleAddToCart = (e: React.FormEvent<HTMLElement>) => {
     e.preventDefault();
   };
 
@@ -63,55 +112,93 @@ export default function Product(props: ProductComponentProps) {
       {bigProductDisplay ? (
         <div className={styles.disableOutsideClicks}>
           <div className={styles.bigProductDiv}>
-            <img
-              src={product.imageUrl || "src/assets/product-no-image.jpg"}
-              alt="no image"
-            />
-            <div>{product.title}</div>
-
-            <div>{product.description}</div>
-            <div>Category:{product.categoryId}</div>
-            <div>stara cena:{product.price}</div>
-            <div>nowa cena:{product.price * (1 - product.discount)}</div>
-            <div>-{product.discount * 100}%</div>
-            <div>id: #{product.id}</div>
-            <form onSubmit={handleBuyProduct}>
-              <label htmlFor="productQuantityInput">Podaj ilość produktu</label>
-              <input
-                id="productQuantityInput"
-                type="number"
-                min={1}
-                value={numberToBuy}
-                onChange={(e) => {
-                  setNumberToBuy(parseInt(e.target.value));
-                }}
-                required
-              />
-              <br />
-              <button type="submit">Kup produkt</button>
-            </form>
-
+            <div className={styles.imageAndProductDiv}>
+              <div className={styles.imageDiv}>
+                <img
+                  src={product.imageUrl || "src/assets/product-no-image.jpg"}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src =
+                      "src/assets/product-no-image.jpg";
+                    (e.target as HTMLImageElement).onerror = null;
+                  }}
+                  alt="no image"
+                />
+              </div>
+              <div className={styles.productAndBuyDiv}>
+                <div className={styles.titleDiv}>{product.title}</div>
+                <div className={styles.starsDiv}>
+                  STARS: {averageRating} ({comments.length} reviews)
+                </div>
+                <div className={styles.descriptionDiv}>
+                  {product.description}
+                </div>
+                <div className={styles.priceDiv}>
+                  <div className={styles.newPriceDiv}>
+                    {productPriceAfterDiscount}zł
+                  </div>
+                  {product.discount ? (
+                    <div className={styles.oldPriceDiv}>{product.price}zł</div>
+                  ) : (
+                    <></>
+                  )}
+                </div>
+                <div className={styles.discountDiv}>
+                  -{product.discount * 100}%
+                </div>
+                <div className={styles.addToCartDiv}>
+                  <form onSubmit={handleAddToCart}>
+                    <label htmlFor="productQuantityInput">Quantity: </label>
+                    <input
+                      id="productQuantityInput"
+                      type="number"
+                      min={1}
+                      value={numberToBuy}
+                      onChange={(e) => {
+                        setNumberToBuy(parseInt(e.target.value));
+                      }}
+                      required
+                    />
+                    <br />
+                    <button type="submit">Add to cart</button>
+                  </form>
+                </div>
+                <div className={styles.brandCategoryIdDiv}>
+                  <div>Category:{categoryName}</div>
+                  <div>Brand:{brandName}</div>
+                  <div>id: #{product.id}</div>
+                </div>
+              </div>
+            </div>
             <div className={styles.commentsDiv}>
               Comments:
-              {comments.length ? (
-                <>
-                  {comments &&
-                    comments.map((comment) => {
-                      return (
-                        <div className={styles.singleCommentDiv}>
-                          stars:{comment.starsNumber} date:{comment.date}
-                          <br />
-                          user:{comment.userId}
-                          <br />
-                          {comment.comment}
-                        </div>
-                      );
-                    })}
-                </>
+              {commentsError ? (
+                <>commentsError</>
               ) : (
                 <>
-                  <br />
-                  Product has no comments
+                  {comments.length ? (
+                    <>
+                      {comments &&
+                        comments.map((comment) => {
+                          return (
+                            <div
+                              className={styles.singleCommentDiv}
+                              key={(comment.productId, comment.userId)}
+                            >
+                              stars:{comment.starsNumber} date:{comment.date}
+                              <br />
+                              user:{comment.userId}
+                              <br />
+                              {comment.comment}
+                            </div>
+                          );
+                        })}
+                    </>
+                  ) : (
+                    <>
+                      <br />
+                      Product has no comments
+                    </>
+                  )}
                 </>
               )}
             </div>
@@ -126,28 +213,48 @@ export default function Product(props: ProductComponentProps) {
         </div>
       ) : (
         <div className={styles.productDiv} onClick={onBigDisplayShow}>
-          <img
-            src={product.imageUrl || "src/assets/product-no-image.jpg"}
-            alt="no image"
-          />
-
-          <div className={styles.priceDiv}>
-            <div className={styles.currentPriceDiv}>
-              {product.price * (1 - product.discount)}zł
-            </div>
-            <div>
-              {product.discount ? (
-                <>
-                  <div className={styles.oldPriceDiv}>{product.price}zł</div>
-                  <div>-{product.discount * 100}%</div>
-                </>
-              ) : (
-                <></>
-              )}
-            </div>
+          <div className={styles.imageDiv}>
+            <img
+              src={product.imageUrl || "src/assets/product-no-image.jpg"}
+              onError={(e) => {
+                (e.target as HTMLImageElement).src =
+                  "src/assets/product-no-image.jpg";
+                (e.target as HTMLImageElement).onerror = null;
+              }}
+              alt="no image"
+            />
           </div>
 
           <div className={styles.titleDiv}>{product.title}</div>
+
+          <div>{productPriceAfterDiscount}</div>
+
+          <div className={styles.productInfoDiv}>
+            <div className={styles.categoryAndBrandDiv}>
+              <div>{categoryName}</div>
+              <div>{brandName}</div>
+            </div>
+            <div className={styles.priceDiv}>
+              {product.discount ? (
+                <div className={styles.oldPriceDiv}>{product.price}zł</div>
+              ) : (
+                <></>
+              )}
+              <div className={styles.currentPriceDiv}>
+                {productPriceAfterDiscount}zł
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.discountDiv}>
+            {product.discount ? (
+              <>
+                <div>-{product.discount * 100}%</div>
+              </>
+            ) : (
+              <></>
+            )}
+          </div>
         </div>
       )}
     </>

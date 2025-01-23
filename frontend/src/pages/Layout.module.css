@@ -1,4 +1,7 @@
 .navBar {
+  position: sticky;
+  top: 0;
+  z-index: 20000;
   background-color: rgb(35, 35, 35);
 
   height: 50px;
@@ -32,7 +35,7 @@
 }
 
 .footer {
-  position: absolute;
+  position: sticky;
   width: 100vw;
   color: white;
   bottom: 0;

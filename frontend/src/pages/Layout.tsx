@@ -1,16 +1,7 @@
 import { Link, Outlet } from "react-router-dom";
 import styles from "./Layout.module.css";
-import { useState } from "react";
 
 export default function Layout() {
-  const [searchedValue, setSearchedValue] = useState("");
-
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    console.log(`Search: ${searchedValue}`);
-  };
-
   return (
     <>
       <nav className={styles.navBar}>
@@ -23,16 +14,7 @@ export default function Layout() {
             <Link to="/">Home</Link>
           </li>
           <li>
-            <form onSubmit={handleSearch}>
-              <input
-                type="text"
-                value={searchedValue}
-                onChange={(e) => {
-                  setSearchedValue(e.target.value);
-                }}
-              />
-              <button type="submit">Search</button>
-            </form>
+            <Link to="/products">Products</Link>
           </li>
           <li>
             <Link to="/contact">Contact</Link>
@@ -45,9 +27,6 @@ export default function Layout() {
           </li>
           <li>
             <Link to="/login">Login</Link>
-          </li>
-          <li>
-            <Link to="/register">Register</Link>
           </li>
           <li>
             <Link to="/adminPanel">AdminPanel</Link>

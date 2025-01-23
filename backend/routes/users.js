@@ -1,6 +1,7 @@
 const express = require("express");
 const sqlite3 = require("sqlite3");
 const router = express.Router();
+const bcrypt = require("bcryptjs");
 
 const db = new sqlite3.Database("database.db");
 
@@ -22,9 +23,9 @@ router
       return res.status(200).json(rows);
     });
   })
-  .post((req, res) => {
+  .post(async (req, res) => {
     const query =
-      "INSERT INTO users (Login, Password, FirstName, LastName, Email) VALUES (?,?,?,?,?)";
+      "INSERT INTO users (login, password, firstName, lastName, email) VALUES (?,?,?,?,?)";
 
     const { login, password, firstName, lastName, email } = req.body;
 
@@ -35,9 +36,26 @@ router
       });
     }
 
+    if (password.length < 8) {
+      return res.status(400).json({
+        error: "Password length need to be at least 8 characters long",
+      });
+    }
+
+    const hashPassword = async (plainPassword) => {
+      try {
+        const saltRounds = 10;
+        return await bcrypt.hash(plainPassword, saltRounds);
+      } catch (err) {
+        return res.status(500).json({ error: "Error hashing password" });
+      }
+    };
+
+    const hashedPassword = await hashPassword(password);
+
     db.run(
       query,
-      [login, password, firstName, lastName, email],
+      [login, hashedPassword, firstName, lastName, email],
       function (err) {
         if (err) {
           console.log("Error inserting data: ", err.message);
@@ -176,24 +194,41 @@ router.route("/checkemailavailable/:email").get((req, res) => {
 });
 
 router.route("/authenticateLogin").post((req, res) => {
-  const login = req.params.login;
-  const password = req.params.password;
+  const { login, password } = req.body;
 
-  const userGetQuery = `SELECT * FROM users WHERE login=${login}`;
-  db.get(userGetQuery, [], (err, row) => {
+  const getUserPasswordQuery = `SELECT password FROM users WHERE login='${login}'`;
+
+  db.get(getUserPasswordQuery, [], async (err, row) => {
     if (err) {
-      console.log("Infernal server error while authenticating user login");
+      console.log("Infernal server error while authenticating user login", err);
       return res.status(500).json({ error: "Infernal server error" });
     }
 
     if (row) {
-      const hashedPassword = row;
+      try {
+        const hashedPassword = row.password;
+
+        const isPasswordMatching = await bcrypt.compare(
+          password,
+          hashedPassword
+        );
+
+        if (isPasswordMatching) {
+          return res.status(200).json({ auth: true });
+        } else {
+          return res
+            .status(400)
+            .json({ error: "Incorrect username and password" });
+        }
+      } catch (err) {
+        console.log("Error while authentication user");
+        return res.status(500).json({ error: "Internal server error" });
+      }
     } else {
-      // bad login
+      // maybe wait so attackers don't see if username is in database
+      return res.status(400).json({ error: "Incorrect username and password" });
     }
   });
-
-  console.log(hashedPassword);
 });
 
 // router.param("id", (req, res, next, id) => {

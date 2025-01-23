@@ -6,15 +6,23 @@ interface CategoryProps {
   categoryName: string;
 }
 
+interface BrandProps {
+  brandId: number;
+  brandName: string;
+}
+
 export default function AddProduct() {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [categoryId, setCategoryId] = useState<number>();
+  const [brandId, setBrandId] = useState<number>();
   const [imageUrl, setImageUrl] = useState<string>("");
   const [price, setPrice] = useState<number>();
   const [discount, setDiscount] = useState<number>(0);
+  const [stockQuantity, setStockQuantity] = useState<number>();
 
   const [categories, setCategories] = useState<CategoryProps[]>([]);
+  const [brands, setBrands] = useState<BrandProps[]>([]);
   const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -23,14 +31,20 @@ export default function AddProduct() {
       setCategories(response.data);
       console.log(response.data);
     };
+    const fetchBrands = async () => {
+      const response = await axios.get("http://localhost:8080/brands");
+      setBrands(response.data);
+      console.log(response.data);
+    };
 
     fetchCategories();
+    fetchBrands();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!title || !description || !categoryId || !price) {
+    if (!title || !description || !categoryId || !price || !stockQuantity) {
       setMessage("All required fields need to be filled");
       return;
     }
@@ -39,9 +53,11 @@ export default function AddProduct() {
       title: title,
       description: description,
       categoryId: categoryId,
+      brandId: brandId,
       imageUrl: imageUrl,
       price: price,
       discount: discount,
+      stockQuantity: stockQuantity,
     };
 
     try {
@@ -79,7 +95,7 @@ export default function AddProduct() {
           required
         />
         <br />
-        <label htmlFor="categoryIdInput">Category ID: </label>
+        <label htmlFor="categorySelect">Category: </label>
         <select
           id="categorySelect"
           value={categoryId}
@@ -95,6 +111,21 @@ export default function AddProduct() {
                 {category.categoryName}
               </option>
             );
+          })}
+        </select>
+        <br />
+        <label htmlFor="brandSelect">Brand: </label>
+        <select
+          id="brandSelect"
+          value={brandId}
+          onChange={(e) => setBrandId(parseInt(e.target.value))}
+          required
+        >
+          <option value="" selected disabled hidden>
+            Choose brand...
+          </option>
+          {brands.map((brand) => {
+            return <option value={brand.brandId}>{brand.brandName}</option>;
           })}
         </select>
         <br />
@@ -130,6 +161,17 @@ export default function AddProduct() {
           required
         />
         %
+        <br />
+        <label htmlFor="stockQuantityInput">Stock quantity: </label>
+        <input
+          id="stockQuantityInput"
+          type="number"
+          value={stockQuantity}
+          onChange={(e) => setStockQuantity(e.target.valueAsNumber)}
+          min={0}
+          max={1e4}
+          required
+        />
         <br />
         <button type="submit">Add product</button>
       </form>

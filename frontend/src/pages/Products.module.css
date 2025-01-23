@@ -1,0 +1,19 @@
+.productsWrapper {
+  display: flex;
+  justify-content: left;
+}
+
+.searchDiv {
+  border: 1px solid black;
+  border-radius: 5px;
+  margin: 20px;
+  margin-right: 0;
+  padding: 10px;
+}
+
+.productsDiv {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 10px;
+}

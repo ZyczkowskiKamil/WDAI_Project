@@ -17,8 +17,12 @@ export default function AuthContextProvider({
 }: AuthContextProviderProps) {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
-  const login = () => setIsLoggedIn(true);
-  const logout = () => setIsLoggedIn(false);
+  const login = () => {
+    if (!isLoggedIn) setIsLoggedIn(true);
+  };
+  const logout = () => {
+    if (isLoggedIn) setIsLoggedIn(false);
+  };
 
   return (
     <AuthContext.Provider value={{ isLoggedIn, login, logout }}>

@@ -19,6 +19,12 @@ const commentsRouter = require("./routes/comments");
 app.use("/comments", commentsRouter);
 const categoriesRouter = require("./routes/categories");
 app.use("/categories", categoriesRouter);
+const brandsRouter = require("./routes/brands");
+app.use("/brands", brandsRouter);
+const ordersRouter = require("./routes/orders");
+app.use("/orders", ordersRouter);
+const orderDetailsRouter = require("./routes/orderDetails");
+app.use("/orderDetails", orderDetailsRouter);
 
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
