@@ -3,7 +3,7 @@ import styles from "./Layout.module.css";
 import { useAuthContext } from "../contexts/AuthContextProvider";
 
 export default function Layout() {
-  const { isLoggedIn, login, logout } = useAuthContext();
+  const { userId } = useAuthContext();
 
   return (
     <>
@@ -28,7 +28,7 @@ export default function Layout() {
             <Link to="/cart">Cart</Link>
           </li>
           <li>
-            {isLoggedIn ? (
+            {userId ? (
               <Link to="/profile">Profile</Link>
             ) : (
               <Link to="/login">Login</Link>

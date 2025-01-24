@@ -25,6 +25,8 @@ const ordersRouter = require("./routes/orders");
 app.use("/orders", ordersRouter);
 const orderDetailsRouter = require("./routes/orderDetails");
 app.use("/orderDetails", orderDetailsRouter);
+const authRouter = require("./routes/auth");
+app.use("/auth", authRouter);
 
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);

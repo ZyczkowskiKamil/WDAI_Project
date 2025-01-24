@@ -1,12 +1,13 @@
-import React, { createContext, useContext, useState } from "react";
+import axios from "axios";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 interface AuthContextProviderProps {
   children: React.ReactNode;
 }
 
 interface AuthContextType {
-  isLoggedIn: boolean;
-  login: () => void;
+  userId: number | null;
+  login: (jwtToken: any) => void;
   logout: () => void;
 }
 
@@ -15,17 +16,45 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export default function AuthContextProvider({
   children,
 }: AuthContextProviderProps) {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [userId, setUserId] = useState<number | null>(null);
 
-  const login = () => {
-    if (!isLoggedIn) setIsLoggedIn(true);
+  useEffect(() => {
+    const jwtToken = localStorage.getItem("jwtToken");
+    login(jwtToken);
+  }, []);
+
+  const login = async (jwtToken: any) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/auth/verify-jwt-token",
+        { jwtToken }
+      );
+
+      if (response.status === 200) {
+        console.log(response.data.userId);
+
+        setUserId(response.data.userId);
+        localStorage.setItem("jwtToken", jwtToken);
+      } else {
+        localStorage.removeItem("jwtToken");
+      }
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        if (err.status === 401) {
+          console.log(err.response?.data.message);
+        }
+      } else {
+        console.log("Token verification error");
+      }
+    }
   };
   const logout = () => {
-    if (isLoggedIn) setIsLoggedIn(false);
+    setUserId(null);
+    localStorage.removeItem("jwtToken");
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
+    <AuthContext.Provider value={{ userId, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

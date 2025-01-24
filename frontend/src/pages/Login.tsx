@@ -6,19 +6,12 @@ import { useAuthContext } from "../contexts/AuthContextProvider";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login } = useAuthContext();
+  const { userId, login } = useAuthContext();
 
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
   const [error, setError] = useState<string | null>(null);
-
-  const loggedInCorrectly = async () => {
-    console.log("LOGIN");
-
-    login();
-    navigate("/products");
-  };
 
   const handleLogin = async (e: React.FormEvent<HTMLElement>) => {
     e.preventDefault();
@@ -40,7 +33,10 @@ export default function Login() {
       );
 
       if (response.status === 200) {
-        loggedInCorrectly();
+        const jwtToken = response.data.jwtToken;
+
+        login(jwtToken);
+        navigate("/products");
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {

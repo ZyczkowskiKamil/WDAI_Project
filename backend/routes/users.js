@@ -2,6 +2,8 @@ const express = require("express");
 const sqlite3 = require("sqlite3");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+require("dotenv").config(); // for accessing env variables
 
 const db = new sqlite3.Database("database.db");
 
@@ -196,7 +198,7 @@ router.route("/checkemailavailable/:email").get((req, res) => {
 router.route("/authenticateLogin").post((req, res) => {
   const { login, password } = req.body;
 
-  const getUserPasswordQuery = `SELECT password FROM users WHERE login='${login}'`;
+  const getUserPasswordQuery = `SELECT id,password FROM users WHERE login='${login}'`;
 
   db.get(getUserPasswordQuery, [], async (err, row) => {
     if (err) {
@@ -206,6 +208,7 @@ router.route("/authenticateLogin").post((req, res) => {
 
     if (row) {
       try {
+        const userId = row.id;
         const hashedPassword = row.password;
 
         const isPasswordMatching = await bcrypt.compare(
@@ -214,7 +217,14 @@ router.route("/authenticateLogin").post((req, res) => {
         );
 
         if (isPasswordMatching) {
-          return res.status(200).json({ auth: true });
+          const payload = {
+            userId: userId,
+          };
+
+          const SECRETKEY = process.env.JWTSECRETKEY;
+          const jwtToken = jwt.sign(payload, SECRETKEY, { expiresIn: "1h" });
+
+          return res.status(200).json({ jwtToken: jwtToken });
         } else {
           return res
             .status(400)

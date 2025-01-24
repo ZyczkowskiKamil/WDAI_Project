@@ -87,7 +87,6 @@ export default function Product(props: ProductComponentProps) {
 
           let ratingSum = 0;
           comments.forEach((comment) => {
-            console.log(comment);
             ratingSum += comment.starsNumber;
           });
           if (comments.length) setAverageRating(ratingSum / comments.length);
@@ -105,6 +104,27 @@ export default function Product(props: ProductComponentProps) {
 
   const handleAddToCart = (e: React.FormEvent<HTMLElement>) => {
     e.preventDefault();
+
+    const localStorageCart = localStorage.getItem("cart");
+    const cart: Array<{ product: ProductProps; qty: number }> = localStorageCart
+      ? JSON.parse(localStorageCart)
+      : [];
+
+    let productFound = false;
+
+    cart.forEach((element) => {
+      if (element.product.id === product.id) {
+        element.qty += numberToBuy;
+        productFound = true;
+        return;
+      }
+    });
+
+    if (!productFound) {
+      cart.push({ product: product, qty: numberToBuy });
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
   };
 
   return (
