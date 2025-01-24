@@ -1,0 +1,9 @@
+.addCommentDiv {
+  margin-top: 20px;
+}
+
+.addCommentDiv form textarea {
+  width: 400px;
+  height: 80px;
+  margin-bottom: 7px;
+}

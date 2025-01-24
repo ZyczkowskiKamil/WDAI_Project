@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import styles from "./Product.module.css";
 import axios from "axios";
+import AddComment from "./AddComment";
 
 interface ProductProps {
   id: number;
@@ -209,9 +210,12 @@ export default function Product(props: ProductComponentProps) {
                               className={styles.singleCommentDiv}
                               key={(comment.productId, comment.userId)}
                             >
-                              stars:{comment.starsNumber} date:{comment.date}
+                              stars: {comment.starsNumber}
                               <br />
-                              user:{comment.userId}
+                              date:{" "}
+                              {new Date(Number(comment.date)).toLocaleString()}
+                              <br />
+                              user: {comment.userId}
                               <br />
                               {comment.comment}
                             </div>
@@ -226,6 +230,7 @@ export default function Product(props: ProductComponentProps) {
                   )}
                 </>
               )}
+              <AddComment productId={product.id} />
             </div>
 
             <button

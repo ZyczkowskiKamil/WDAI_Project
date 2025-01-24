@@ -110,4 +110,35 @@ router.post("/placeOrderWithCart", async (req, res) => {
   }
 });
 
+router.post("/getOrdersWithToken", (req, res) => {
+  const jwtToken = req.body.jwtToken;
+
+  if (!jwtToken) {
+    return res.status(401).json({ message: "JWT Token is required" });
+  }
+
+  try {
+    const decoded = jwt.verify(jwtToken, process.env.JWTSECRETKEY);
+
+    // token ok
+
+    const userId = decoded.userId;
+
+    const query = `SELECT * FROM orders WHERE userId=${userId}`;
+
+    db.all(query, (err, rows) => {
+      if (err) {
+        console.log("Error retrieving orders from database");
+        return res
+          .status(500)
+          .json({ error: "Infernal error retrieving orders" });
+      }
+
+      return res.status(200).json(rows);
+    });
+  } catch (err) {
+    return res.status(401).json({ message: "Invalid or expired jwt token" });
+  }
+});
+
 module.exports = router;
