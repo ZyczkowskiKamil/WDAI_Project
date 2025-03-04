@@ -104,7 +104,7 @@ router.post("/placeOrderWithCart", async (req, res) => {
     const orderId = await insertOrder();
     inserOrderDetails(orderId);
 
-    return res.status(200);
+    return res.status(201).json({ status: "OK" });
   } catch (err) {
     return res.status(401).json({ message: "Invalid or expired jwt token" });
   }

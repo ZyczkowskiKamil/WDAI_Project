@@ -34,15 +34,15 @@ export default function Layout() {
               <Link to="/login">Login</Link>
             )}
           </li>
-          <li>
-            <Link to="/adminPanel">AdminPanel</Link>
-          </li>
         </ul>
       </nav>
 
       <Outlet />
 
-      <footer className={styles.footer}>Stopka</footer>
+      <footer className={styles.footer}>
+        Stopka
+        <Link to="/adminPanel">AdminPanel</Link>
+      </footer>
     </>
   );
 }

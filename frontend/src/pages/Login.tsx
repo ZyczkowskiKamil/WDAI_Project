@@ -6,7 +6,7 @@ import { useAuthContext } from "../contexts/AuthContextProvider";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { userId, login } = useAuthContext();
+  const { login } = useAuthContext();
 
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -74,7 +74,7 @@ export default function Login() {
             <label htmlFor="passwordInput">
               <input
                 id="passwordInput"
-                type="text"
+                type="password"
                 value={password}
                 placeholder="Password"
                 onChange={(e) => setPassword(e.target.value)}

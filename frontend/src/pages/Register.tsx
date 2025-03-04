@@ -107,7 +107,7 @@ export default function Register() {
             <label htmlFor="password-input">
               <input
                 id="password-input"
-                type="text"
+                type="password"
                 value={password}
                 placeholder="Password"
                 onChange={(e) => setPassword(e.target.value)}

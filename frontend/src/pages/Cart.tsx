@@ -47,7 +47,7 @@ export default function Cart() {
     calculateTotalPrice();
   }, [cart]);
 
-  const handleOrder = () => {
+  const handleOrder = async () => {
     if (userId === null) {
       navigate("/login");
       return;
@@ -72,10 +72,19 @@ export default function Cart() {
 
     const jwtToken = localStorage.getItem("jwtToken");
 
-    const response = axios.post(
+    console.log("AAA");
+
+    const response = await axios.post(
       "http://localhost:8080/orders/placeOrderWithCart",
       { jwtToken: jwtToken, cartBref: cartBref }
     );
+
+    console.log("XD");
+
+    if (response.status === 201) {
+      localStorage.removeItem("cart");
+      setCart([]);
+    }
   };
 
   return (
@@ -113,7 +122,7 @@ export default function Cart() {
             })}
           </tbody>
         </table>
-        <div>Total: {totalPrice}</div>
+        <div>Total: {totalPrice.toFixed(2)}zł</div>
         <button
           onClick={() => {
             localStorage.removeItem("cart");
